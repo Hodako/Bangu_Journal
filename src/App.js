@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
@@ -33,13 +33,13 @@ const App = () => {
     <Router>
       <div className={`app ${isDarkMode ? 'dark-mode' : 'light-mode'}`}>
         <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} isAuthenticated={isAuthenticated} />
-        <Switch>
-          <Route exact path="/" component={() => <Home articles={articles} isDarkMode={isDarkMode} />} />
-          <Route path="/login" component={() => <Login setIsAuthenticated={setIsAuthenticated} />} />
-          <Route path="/signup" component={Signup} />
-          <Route path="/upload" component={Upload} />
-          <Route path="/article/:id" component={Article} />
-        </Switch>
+        <Routes>
+          <Route path="/" element={<Home articles={articles} isDarkMode={isDarkMode} />} />
+          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
+          <Route path="/signup" element={<Signup />} />
+          <Route path="/upload" element={<Upload />} />
+          <Route path="/article/:id" element={<Article />} />
+        </Routes>
       </div>
     </Router>
   );
