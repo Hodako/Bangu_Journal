@@ -4,76 +4,46 @@ import axios from 'axios';
 const Upload = () => {
   const [title, setTitle] = useState('');
   const [content, setContent] = useState('');
-  const [tags, setTags] = useState('');
-  const [file, setFile] = useState(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const formData = new FormData();
-    formData.append('title', title);
-    formData.append('content', content);
-    formData.append('tags', tags.split(',').map(tag => tag.trim()));
-    formData.append('file', file);
-
     try {
-      const token = localStorage.getItem('token');
-      await axios.post(`${process.env.REACT_APP_API_URL}/articles/upload`, formData, {
-        headers: {
-          'Authorization': `Bearer ${token}`
-        }
-      });
-      alert('Article uploaded successfully');
+      const response = await axios.post('https://backend-1-xdr3.onrender.com/articles', { title, content });
+      console.log(response.data);
+      // Handle successful response
     } catch (error) {
-      console.error('Error uploading article', error);
-      alert('Failed to upload article');
+      console.error(error);
+      // Handle error response
     }
   };
 
   return (
-    <div className="container">
-      <form onSubmit={handleSubmit}>
-        <div className="form-group">
-          <label htmlFor="title">Title</label>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">Upload New Article</h1>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Title</label>
           <input
             type="text"
-            className="form-control"
-            id="title"
             value={title}
             onChange={(e) => setTitle(e.target.value)}
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
             required
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="content">Content</label>
+        <div className="space-y-2">
+          <label className="text-sm font-medium">Content</label>
           <textarea
-            className="form-control"
-            id="content"
-            rows="10"
             value={content}
             onChange={(e) => setContent(e.target.value)}
+            className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
             required
-          ></textarea>
-        </div>
-        <div className="form-group">
-          <label htmlFor="tags">Tags (comma separated)</label>
-          <input
-            type="text"
-            className="form-control"
-            id="tags"
-            value={tags}
-            onChange={(e) => setTags(e.target.value)}
           />
         </div>
-        <div className="form-group">
-          <label htmlFor="file">Upload Image</label>
-          <input
-            type="file"
-            className="form-control-file"
-            id="file"
-            onChange={(e) => setFile(e.target.files[0])}
-          />
-        </div>
-        <button type="submit" className="btn btn-primary mt-2">
+        <button
+          type="submit"
+          className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors"
+        >
           Upload
         </button>
       </form>
