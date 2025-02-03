@@ -1,11 +1,13 @@
 import React, { useState } from 'react';
 import { Globe, ChevronDown } from 'lucide-react';
-import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '@/components/ui/card';
+import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../components/ui/Card';
+import axios from 'axios';
 
 const AuthPages = () => {
   const [currentPage, setCurrentPage] = useState('login');
   const [language, setLanguage] = useState('en');
   const [showLangMenu, setShowLangMenu] = useState(false);
+  const [formData, setFormData] = useState({ email: '', password: '', name: '', role: '' });
 
   const translations = {
     en: {
@@ -73,6 +75,24 @@ const AuthPages = () => {
     }
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData({ ...formData, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    const url = currentPage === 'login' ? '/login' : '/signup';
+    try {
+      const response = await axios.post(`https://backend-1-xdr3.onrender.com${url}`, formData);
+      console.log(response.data);
+      // Handle successful response (e.g., redirect to home page)
+    } catch (error) {
+      console.error(error);
+      // Handle error response
+    }
+  };
+
   const LoginForm = () => (
     <div className="w-full max-w-md px-4">
       <Card className="shadow-md">
@@ -85,36 +105,45 @@ const AuthPages = () => {
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium" style={styles.body}>
-              {t.email}
-            </label>
-            <input
-              type="email"
-              placeholder={t.emailPlaceholder}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-              style={styles.body}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium" style={styles.body}>
-              {t.password}
-            </label>
-            <input
-              type="password"
-              placeholder={t.passwordPlaceholder}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-              style={styles.body}
-              required
-            />
-          </div>
-          <button 
-            className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors"
-            style={styles.heading}
-          >
-            {t.login}
-          </button>
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <label className="text-sm font-medium" style={styles.body}>
+                {t.email}
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder={t.emailPlaceholder}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
+                style={styles.body}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium" style={styles.body}>
+                {t.password}
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder={t.passwordPlaceholder}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
+                style={styles.body}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors"
+              style={styles.heading}
+            >
+              {t.login}
+            </button>
+          </form>
         </CardContent>
         <CardFooter>
           <p className="text-sm text-center w-full text-gray-600" style={styles.body}>
@@ -144,75 +173,93 @@ const AuthPages = () => {
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <label className="text-sm font-medium" style={styles.body}>
-              {t.name}
-            </label>
-            <input
-              type="text"
-              placeholder={t.namePlaceholder}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-              style={styles.body}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium" style={styles.body}>
-              {t.email}
-            </label>
-            <input
-              type="email"
-              placeholder={t.emailPlaceholder}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-              style={styles.body}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium" style={styles.body}>
-              {t.role}
-            </label>
-            <select 
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-              style={styles.body}
-              defaultValue=""
+          <form onSubmit={handleSubmit}>
+            <div className="space-y-2">
+              <label className="text-sm font-medium" style={styles.body}>
+                {t.name}
+              </label>
+              <input
+                type="text"
+                name="name"
+                value={formData.name}
+                onChange={handleInputChange}
+                placeholder={t.namePlaceholder}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
+                style={styles.body}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium" style={styles.body}>
+                {t.email}
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder={t.emailPlaceholder}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
+                style={styles.body}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium" style={styles.body}>
+                {t.role}
+              </label>
+              <select
+                name="role"
+                value={formData.role}
+                onChange={handleInputChange}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
+                style={styles.body}
+                required
+              >
+                <option value="" disabled>{language === 'en' ? 'Select your role' : 'আপনার ভূমিকা নির্বাচন করুন'}</option>
+                <option value="author">{t.author}</option>
+                <option value="reviewer">{t.reviewer}</option>
+                <option value="reader">{t.reader}</option>
+              </select>
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium" style={styles.body}>
+                {t.password}
+              </label>
+              <input
+                type="password"
+                name="password"
+                value={formData.password}
+                onChange={handleInputChange}
+                placeholder={t.passwordPlaceholder}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
+                style={styles.body}
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <label className="text-sm font-medium" style={styles.body}>
+                {t.confirmPassword}
+              </label>
+              <input
+                type="password"
+                name="confirmPassword"
+                value={formData.confirmPassword}
+                onChange={handleInputChange}
+                placeholder={t.confirmPasswordPlaceholder}
+                className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
+                style={styles.body}
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors"
+              style={styles.heading}
             >
-              <option value="" disabled>{language === 'en' ? 'Select your role' : 'আপনার ভূমিকা নির্বাচন করুন'}</option>
-              <option value="author">{t.author}</option>
-              <option value="reviewer">{t.reviewer}</option>
-              <option value="reader">{t.reader}</option>
-            </select>
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium" style={styles.body}>
-              {t.password}
-            </label>
-            <input
-              type="password"
-              placeholder={t.passwordPlaceholder}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-              style={styles.body}
-              required
-            />
-          </div>
-          <div className="space-y-2">
-            <label className="text-sm font-medium" style={styles.body}>
-              {t.confirmPassword}
-            </label>
-            <input
-              type="password"
-              placeholder={t.confirmPasswordPlaceholder}
-              className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-              style={styles.body}
-              required
-            />
-          </div>
-          <button 
-            className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors"
-            style={styles.heading}
-          >
-            {t.signup}
-          </button>
+              {t.signup}
+            </button>
+          </form>
         </CardContent>
         <CardFooter>
           <p className="text-sm text-center w-full text-gray-600" style={styles.body}>
@@ -276,13 +323,13 @@ const AuthPages = () => {
       {/* Main Content */}
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] py-8">
         <div className="text-center mb-8">
-          <h1 
+          <h1
             className="text-4xl sm:text-5xl mb-3 text-blue-600"
             style={styles.logo}
           >
             {language === 'en' ? 'BanguJournal' : 'বাংগু জার্নাল'}
           </h1>
-          <p 
+          <p
             className="text-gray-600 text-sm sm:text-base"
             style={styles.body}
           >
