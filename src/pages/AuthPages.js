@@ -1,79 +1,10 @@
 import React, { useState } from 'react';
-import { Globe, ChevronDown } from 'lucide-react';
+import axios from '../axiosConfig'; // Import the Axios instance
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from '../components/ui/Card';
-import axios from 'axios';
 
 const AuthPages = () => {
   const [currentPage, setCurrentPage] = useState('login');
-  const [language, setLanguage] = useState('en');
-  const [showLangMenu, setShowLangMenu] = useState(false);
   const [formData, setFormData] = useState({ email: '', password: '', name: '', role: '' });
-
-  const translations = {
-    en: {
-      login: 'Login',
-      signup: 'Sign Up',
-      email: 'Email Address',
-      emailPlaceholder: 'Enter your academic email',
-      password: 'Password',
-      passwordPlaceholder: 'Enter your password',
-      confirmPassword: 'Confirm Password',
-      confirmPasswordPlaceholder: 'Re-enter your password',
-      name: 'Full Name',
-      namePlaceholder: 'Enter your full name',
-      role: 'Academic Role',
-      author: 'Author/Researcher',
-      reviewer: 'Peer Reviewer',
-      reader: 'Reader',
-      noAccount: "Don't have an account?",
-      hasAccount: 'Already have an account?',
-      createAccount: 'Sign Up',
-      welcomeBack: 'Welcome Back',
-      welcomeNew: 'Create Account',
-      subtitle: 'Research Publication Platform',
-      tagline: 'Bridging Knowledge Across Languages'
-    },
-    bn: {
-      login: 'লগইন',
-      signup: 'নিবন্ধন',
-      email: 'ইমেইল',
-      emailPlaceholder: 'আপনার একাডেমিক ইমেইল লিখুন',
-      password: 'পাসওয়ার্ড',
-      passwordPlaceholder: 'আপনার পাসওয়ার্ড লিখুন',
-      confirmPassword: 'পাসওয়ার্ড নিশ্চিত করুন',
-      confirmPasswordPlaceholder: 'পাসওয়ার্ড আবার লিখুন',
-      name: 'পূর্ণ নাম',
-      namePlaceholder: 'আপনার পূর্ণ নাম লিখুন',
-      role: 'একাডেমিক ভূমিকা',
-      author: 'লেখক/গবেষক',
-      reviewer: 'পর্যালোচক',
-      reader: 'পাঠক',
-      noAccount: 'অ্যাকাউন্ট নেই?',
-      hasAccount: 'ইতিমধ্যে অ্যাকাউন্ট আছে?',
-      createAccount: 'নিবন্ধন করুন',
-      welcomeBack: 'পুনরায় স্বাগতম',
-      welcomeNew: 'অ্যাকাউন্ট তৈরি করুন',
-      subtitle: 'গবেষণা প্রকাশনা প্ল্যাটফর্ম',
-      tagline: 'ভাষার সীমানা অতিক্রম করে জ্ঞানের সেতুবন্ধন'
-    }
-  };
-
-  const t = translations[language];
-
-  const styles = {
-    logo: {
-      fontFamily: "'Playfair Display', serif",
-      fontWeight: 700
-    },
-    heading: {
-      fontFamily: "'Roboto', sans-serif",
-      fontWeight: 500
-    },
-    body: {
-      fontFamily: "'Roboto', sans-serif",
-      fontWeight: 400
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -82,14 +13,22 @@ const AuthPages = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const url = currentPage === 'login' ? '/login' : '/signup';
+    const url = currentPage === 'login' ? '/api/auth/login' : '/api/auth/signup';
     try {
-      const response = await axios.post(`https://backend-1-xdr3.onrender.com${url}`, formData);
+      const response = await axios.post(url, formData);
       console.log(response.data);
       // Handle successful response (e.g., redirect to home page)
     } catch (error) {
-      console.error(error);
-      // Handle error response
+      if (error.response) {
+        // Server responded with a status other than 200 range
+        console.error('Response error:', error.response.data);
+      } else if (error.request) {
+        // Request was made but no response received
+        console.error('Request error:', error.request);
+      } else {
+        // Something else happened while setting up the request
+        console.error('Error:', error.message);
+      }
     }
   };
 
@@ -97,63 +36,47 @@ const AuthPages = () => {
     <div className="w-full max-w-md px-4">
       <Card className="shadow-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center" style={styles.heading}>
-            {t.welcomeBack}
-          </CardTitle>
-          <p className="text-center text-gray-600 text-sm" style={styles.body}>
-            {t.subtitle}
-          </p>
+          <CardTitle className="text-2xl text-center">Welcome Back</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <label className="text-sm font-medium" style={styles.body}>
-                {t.email}
-              </label>
+              <label className="text-sm font-medium">Email</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                placeholder={t.emailPlaceholder}
+                placeholder="Enter your academic email"
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-                style={styles.body}
                 required
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium" style={styles.body}>
-                {t.password}
-              </label>
+              <label className="text-sm font-medium">Password</label>
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                placeholder={t.passwordPlaceholder}
+                placeholder="Enter your password"
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-                style={styles.body}
                 required
               />
             </div>
             <button
               type="submit"
               className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors"
-              style={styles.heading}
             >
-              {t.login}
+              Login
             </button>
           </form>
         </CardContent>
         <CardFooter>
-          <p className="text-sm text-center w-full text-gray-600" style={styles.body}>
-            {t.noAccount}{' '}
-            <button
-              onClick={() => setCurrentPage('signup')}
-              className="text-blue-600 hover:text-blue-700 font-medium"
-              style={styles.heading}
-            >
-              {t.createAccount}
+          <p className="text-sm text-center w-full text-gray-600">
+            Don't have an account?{' '}
+            <button onClick={() => setCurrentPage('signup')} className="text-blue-600 hover:text-blue-700 font-medium">
+              Sign Up
             </button>
           </p>
         </CardFooter>
@@ -165,111 +88,86 @@ const AuthPages = () => {
     <div className="w-full max-w-md px-4">
       <Card className="shadow-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl text-center" style={styles.heading}>
-            {t.welcomeNew}
-          </CardTitle>
-          <p className="text-center text-gray-600 text-sm" style={styles.body}>
-            {t.subtitle}
-          </p>
+          <CardTitle className="text-2xl text-center">Create Account</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <form onSubmit={handleSubmit}>
             <div className="space-y-2">
-              <label className="text-sm font-medium" style={styles.body}>
-                {t.name}
-              </label>
+              <label className="text-sm font-medium">Full Name</label>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
-                placeholder={t.namePlaceholder}
+                placeholder="Enter your full name"
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-                style={styles.body}
                 required
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium" style={styles.body}>
-                {t.email}
-              </label>
+              <label className="text-sm font-medium">Email</label>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
-                placeholder={t.emailPlaceholder}
+                placeholder="Enter your academic email"
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-                style={styles.body}
                 required
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium" style={styles.body}>
-                {t.role}
-              </label>
+              <label className="text-sm font-medium">Academic Role</label>
               <select
                 name="role"
                 value={formData.role}
                 onChange={handleInputChange}
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-                style={styles.body}
                 required
               >
-                <option value="" disabled>{language === 'en' ? 'Select your role' : 'আপনার ভূমিকা নির্বাচন করুন'}</option>
-                <option value="author">{t.author}</option>
-                <option value="reviewer">{t.reviewer}</option>
-                <option value="reader">{t.reader}</option>
+                <option value="" disabled>Select your role</option>
+                <option value="author">Author/Researcher</option>
+                <option value="reviewer">Peer Reviewer</option>
+                <option value="reader">Reader</option>
               </select>
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium" style={styles.body}>
-                {t.password}
-              </label>
+              <label className="text-sm font-medium">Password</label>
               <input
                 type="password"
                 name="password"
                 value={formData.password}
                 onChange={handleInputChange}
-                placeholder={t.passwordPlaceholder}
+                placeholder="Enter your password"
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-                style={styles.body}
                 required
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium" style={styles.body}>
-                {t.confirmPassword}
-              </label>
+              <label className="text-sm font-medium">Confirm Password</label>
               <input
                 type="password"
                 name="confirmPassword"
                 value={formData.confirmPassword}
                 onChange={handleInputChange}
-                placeholder={t.confirmPasswordPlaceholder}
+                placeholder="Re-enter your password"
                 className="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none text-base"
-                style={styles.body}
                 required
               />
             </div>
             <button
               type="submit"
               className="w-full bg-blue-600 text-white p-3 rounded-lg hover:bg-blue-700 transition-colors"
-              style={styles.heading}
             >
-              {t.signup}
+              Sign Up
             </button>
           </form>
         </CardContent>
         <CardFooter>
-          <p className="text-sm text-center w-full text-gray-600" style={styles.body}>
-            {t.hasAccount}{' '}
-            <button
-              onClick={() => setCurrentPage('login')}
-              className="text-blue-600 hover:text-blue-700 font-medium"
-              style={styles.heading}
-            >
-              {t.login}
+          <p className="text-sm text-center w-full text-gray-600">
+            Already have an account?{' '}
+            <button onClick={() => setCurrentPage('login')} className="text-blue-600 hover:text-blue-700 font-medium">
+              Login
             </button>
           </p>
         </CardFooter>
@@ -279,62 +177,9 @@ const AuthPages = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      {/* Language Switcher */}
-      <div className="w-full bg-white border-b">
-        <div className="max-w-7xl mx-auto px-4 py-2 flex justify-end">
-          <div className="relative">
-            <button
-              className="flex items-center space-x-2 text-gray-600 p-2 rounded hover:bg-gray-100"
-              style={styles.body}
-              onClick={() => setShowLangMenu(!showLangMenu)}
-            >
-              <Globe className="w-5 h-5" />
-              <span>{language === 'en' ? 'English' : 'বাংলা'}</span>
-              <ChevronDown className="w-4 h-4" />
-            </button>
-            {showLangMenu && (
-              <div className="absolute right-0 mt-1 w-48 bg-white rounded shadow-lg border">
-                <button
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                  style={styles.body}
-                  onClick={() => {
-                    setLanguage('en');
-                    setShowLangMenu(false);
-                  }}
-                >
-                  English
-                </button>
-                <button
-                  className="w-full text-left px-4 py-2 hover:bg-gray-100"
-                  style={styles.body}
-                  onClick={() => {
-                    setLanguage('bn');
-                    setShowLangMenu(false);
-                  }}
-                >
-                  বাংলা
-                </button>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Main Content */}
       <div className="flex flex-col items-center justify-center min-h-[calc(100vh-56px)] py-8">
         <div className="text-center mb-8">
-          <h1
-            className="text-4xl sm:text-5xl mb-3 text-blue-600"
-            style={styles.logo}
-          >
-            {language === 'en' ? 'BanguJournal' : 'বাংগু জার্নাল'}
-          </h1>
-          <p
-            className="text-gray-600 text-sm sm:text-base"
-            style={styles.body}
-          >
-            {t.tagline}
-          </p>
+          <h1 className="text-4xl sm:text-5xl mb-3 text-blue-600">BanguJournal</h1>
         </div>
         {currentPage === 'login' ? <LoginForm /> : <SignupForm />}
       </div>
