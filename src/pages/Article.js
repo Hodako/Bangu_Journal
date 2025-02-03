@@ -9,31 +9,26 @@ const Article = () => {
   useEffect(() => {
     const fetchArticle = async () => {
       try {
-        const res = await axios.get(`${process.env.REACT_APP_API_URL}/articles/${id}`);
-        setArticle(res.data);
+        const response = await axios.get(`https://backend-1-xdr3.onrender.com/articles/${id}`);
+        setArticle(response.data);
       } catch (error) {
-        console.error('Error fetching article', error);
+        console.error(error);
       }
     };
 
     fetchArticle();
   }, [id]);
 
-  if (!article) return <div>Loading...</div>;
+  if (!article) {
+    return <div>Loading...</div>;
+  }
 
   return (
-    <div className="container">
-      <div className="row">
-        <div className="col-md-8">
-          <h1>{article.title}</h1>
-          <img src={`${process.env.REACT_APP_API_URL}/uploads/${article.thumbnail}`} alt="Thumbnail" className="img-fluid" />
-          <p>{article.content}</p>
-          <div className="mt-2">
-            {article.tags && article.tags.map(tag => (
-              <span key={tag} className="badge bg-primary me-1">{tag}</span>
-            ))}
-          </div>
-        </div>
+    <div className="max-w-7xl mx-auto px-4 py-8">
+      <h1 className="text-3xl font-bold mb-6">{article.title}</h1>
+      <p className="text-gray-600 mb-4">{article.abstract}</p>
+      <div className="prose">
+        {article.content}
       </div>
     </div>
   );
