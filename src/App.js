@@ -3,8 +3,7 @@ import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import axios from 'axios';
 import Navbar from './components/Navbar';
 import Home from './pages/Home';
-import Login from './pages/Login';
-import Signup from './pages/Signup';
+import AuthPages from './pages/AuthPages';
 import Upload from './pages/Upload';
 import Article from './pages/Article';
 
@@ -35,6 +34,16 @@ const App = () => {
         <Navbar isDarkMode={isDarkMode} setIsDarkMode={setIsDarkMode} isAuthenticated={isAuthenticated} />
         <Routes>
           <Route path="/" element={<Home articles={articles} isDarkMode={isDarkMode} />} />
+          <Route path="/auth" element={<AuthPages />} />
+          <Route path="/upload" element={<Upload />} />
+          <Route path="/article/:id" element={<Article />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+};
+
+export default App;          <Route path="/" element={<Home articles={articles} isDarkMode={isDarkMode} />} />
           <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
           <Route path="/signup" element={<Signup />} />
           <Route path="/upload" element={<Upload />} />
