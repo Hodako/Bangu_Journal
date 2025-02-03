@@ -43,15 +43,4 @@ const App = () => {
   );
 };
 
-export default App;          <Route path="/" element={<Home articles={articles} isDarkMode={isDarkMode} />} />
-          <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} />} />
-          <Route path="/signup" element={<Signup />} />
-          <Route path="/upload" element={<Upload />} />
-          <Route path="/article/:id" element={<Article />} />
-        </Routes>
-      </div>
-    </Router>
-  );
-};
-
 export default App;
